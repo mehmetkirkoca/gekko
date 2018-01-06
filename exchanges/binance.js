@@ -22,7 +22,7 @@ var Trader = function(config) {
     key: this.key,
     secret: this.secret,
     timeout: 15000,
-    recvWindow: 60000, // suggested by binance
+    recvWindow: 60000, // suggested by binance, defaults to 5000 millisecond. With recvWindow, you can specify that the request must be processed within a certain number of milliseconds or be rejected by the server.
     disableBeautification: false, // better field names
   });
 };
@@ -32,8 +32,8 @@ var recoverableErrors = new RegExp(
 );
 
 Trader.prototype.retry = function(method, args, error) {
-  if (!error || !error.message.match(recoverableErrors)) {
-    log.error('[binance.js] ', this.name, 'returned an irrecoverable error');
+  if (!error || (error.msg && !error.msg.match(recoverableErrors))) {
+    log.error('[binance.js] ', this.name, 'returned an irrecoverable error or there is no error');
     return;
   }
 
@@ -94,7 +94,7 @@ Trader.prototype.getTrades = function(since, callback, descending) {
 
   if (since) {
     var endTs = moment(since)
-      .add(1, 'd')
+      .add(3600000, 'ms')
       .valueOf();
     var nowTs = moment().valueOf();
 
@@ -406,7 +406,9 @@ Trader.getCapabilities = function() {
       'POWR',
       'QTUM',
       'ZEC',
-      'XVG',
+      'XRP',
+      'PPT',
+      'XVG'
     ],
     markets: [
       // https://www.binance.com/exchange/public/product
@@ -418,12 +420,12 @@ Trader.getCapabilities = function() {
         precision: 0.000001,
       },
       {
-        pair: ['BTC', 'XVG'],
-        minimalOrder: { amount: 0.001, unit: 'asset' },
-        precision: 0.000001,
+        pair: ['BTC', 'BNB'],
+        minimalOrder: { amount: 1, unit: 'asset' },
+        precision: 0.00000001,
       },
       {
-        pair: ['BTC', 'BNB'],
+        pair: ['BTC', 'XVG'],
         minimalOrder: { amount: 1, unit: 'asset' },
         precision: 0.00000001,
       },
@@ -534,7 +536,17 @@ Trader.getCapabilities = function() {
       {
         pair: ['ETH', 'ZEC'],
         minimalOrder: { amount: 0.001, unit: 'asset' },
-        precision: 00001,
+        precision: 0.00001,
+      },
+      {
+        pair: ['ETH', 'XRP'],
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.0001,
+      },
+      {
+        pair: ['ETH', 'PPT'],
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.0001,
       },
 
       //Tradeable againt USDT
