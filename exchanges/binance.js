@@ -406,6 +406,7 @@ Trader.getCapabilities = function() {
       'POWR',
       'QTUM',
       'ZEC',
+      'XVG',
     ],
     markets: [
       // https://www.binance.com/exchange/public/product
@@ -413,6 +414,11 @@ Trader.getCapabilities = function() {
       //Tradeable againt BTC
       {
         pair: ['BTC', 'BCC'],
+        minimalOrder: { amount: 0.001, unit: 'asset' },
+        precision: 0.000001,
+      },
+      {
+        pair: ['BTC', 'XVG'],
         minimalOrder: { amount: 0.001, unit: 'asset' },
         precision: 0.000001,
       },
